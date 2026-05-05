@@ -658,9 +658,24 @@ window.addEventListener('message', function(e) {
 // Wire up window.duet once the script has loaded
 function initDuet() {
   if (!window.duet) return;
+
   window.duet.setEventListener(function(event) {
     if (event?.eventName === 'DECAGON_LOADED') {
       window.duet.setMetadata({ page: 'product-listing', occasion: activeOccasion });
+    }
+  });
+
+  window.duet.setMetadataRequestListener(async function(payload, callback) {
+    const { subtype, params } = payload;
+    if (subtype === 'add_to_cart') {
+      const name  = params.item_name  || params.name  || '';
+      const price = params.item_price || params.price || 0;
+      addToCart(name, price);
+      callback({
+        ok: true,
+        cart_count: cartItems.reduce((s, i) => s + i.qty, 0),
+        persist: false,
+      });
     }
   });
 }
