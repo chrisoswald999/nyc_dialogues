@@ -754,6 +754,18 @@ function chQty(idx, d) {
 }
 
 renderCart();
+
+window.addEventListener('keydown', function(e) {
+  if (e.metaKey && e.key.toLowerCase() === 'b') {
+    if (window.duet && typeof window.duet.open === 'function') {
+      window.duet.open();
+      window.duet.setTriggerMessage(
+        "Hi! I'm your personal style assistant. Tell me where you're headed and I'll put together the perfect look.",
+        true
+      );
+    }
+  }
+});
 </script>
 
 <script
