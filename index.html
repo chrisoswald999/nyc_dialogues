@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decked Out — by Decagon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ── Tokens ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #f9f8f6;
+  --surface:    #ffffff;
+  --surface2:   #f3f1ee;
+  --border:     #e8e4df;
+  --border2:    #d6d0c8;
+  --ink:        #1a1917;
+  --ink2:       #3d3a35;
+  --muted:      #8c8880;
+  --dcg-gold:   #c9a96e;
+  --nav-h:      60px;
+  --chat-w:     400px;
+}
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* ── Shell ────────────────────────────────────────────────────────────── */
+.shell {
+  display: grid;
+  grid-template-columns: 1fr var(--chat-w);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Left col ─────────────────────────────────────────────────────────── */
+.site-col {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+
+/* Topbar */
+.topbar {
+  height: var(--nav-h);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+}
+
+.brand { display: flex; align-items: baseline; gap: 9px; }
+.brand-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.brand-by {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.nav-links { display: flex; gap: 24px; list-style: none; }
+.nav-links a {
+  text-decoration: none;
+  font-size: 12px;
+  color: var(--ink2);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--ink); }
+
+.topbar-right { display: flex; align-items: center; gap: 2px; }
+
+.icon-btn {
+  width: 34px; height: 34px;
+  border: none; background: none;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--ink2);
+  position: relative;
+  transition: background 0.15s, color 0.15s;
+}
+.icon-btn:hover { background: var(--surface2); color: var(--ink); }
+
+.cart-pip {
+  position: absolute; top: 4px; right: 4px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--ink); color: #fff;
+  font-size: 8px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+}
+.cart-pip.bump { transform: scale(1.5); background: var(--dcg-gold); }
+
+/* Site scrollable body */
+.site-body {
+  flex: 1; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
+}
+.site-body::-webkit-scrollbar { width: 3px; }
+.site-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* Hero */
+.hero {
+  background: var(--ink);
+  padding: 56px 28px 48px;
+  position: relative; overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 85% 50%, rgba(201,169,110,0.07), transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 32px;
+  position: relative; z-index: 1;
+}
+.hero-kicker {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--dcg-gold); margin-bottom: 14px;
+}
+.hero-h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(32px, 3.5vw, 46px);
+  font-weight: 400; line-height: 1.1;
+  color: #f5f3ef; letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.hero-h1 em { font-style: italic; color: var(--dcg-gold); }
+.hero-p { font-size: 13px; line-height: 1.65; color: #7a7772; max-width: 320px; margin-bottom: 28px; }
+.hero-btns { display: flex; gap: 9px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  border-radius: 6px; cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s; text-decoration: none;
+}
+.btn-solid { background: #f5f3ef; color: var(--ink); border-color: #f5f3ef; }
+.btn-solid:hover { background: var(--dcg-gold); border-color: var(--dcg-gold); color: #fff; }
+.btn-outline { background: transparent; color: #7a7772; border-color: #363330; }
+.btn-outline:hover { border-color: #7a7772; color: #f5f3ef; }
+.hero-stat { flex-shrink: 0; text-align: right; }
+.hero-stat-n {
+  font-family: 'Instrument Serif', serif;
+  font-size: 44px; color: #f5f3ef; line-height: 1; margin-bottom: 4px;
+}
+.hero-stat-l { font-size: 11px; color: #57534e; }
+
+/* Occasion strip */
+.occ-strip {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0 28px;
+  display: flex; align-items: center; gap: 2px;
+  overflow-x: auto; scrollbar-width: none; height: 46px; flex-shrink: 0;
+}
+.occ-strip::-webkit-scrollbar { display: none; }
+.occ-label {
+  font-size: 11px; font-weight: 500; color: var(--muted);
+  white-space: nowrap; padding-right: 12px;
+  border-right: 1px solid var(--border); margin-right: 8px; flex-shrink: 0;
+}
+.occ-btn {
+  height: 26px; padding: 0 13px;
+  border: none; background: transparent;
+  color: var(--ink2); font-size: 12px; font-family: 'DM Sans', sans-serif;
+  border-radius: 4px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.occ-btn:hover { background: var(--surface2); }
+.occ-btn.active { background: var(--ink); color: #fff; }
+
+/* Section */
+.section { padding: 28px 28px 0; }
+.sec-hd {
+  display: flex; align-items: baseline;
+  justify-content: space-between; margin-bottom: 18px;
+}
+.sec-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 21px; font-weight: 400; letter-spacing: -0.01em;
+}
+.sec-meta { font-size: 11px; color: var(--muted); }
+.link-s { font-size: 12px; font-weight: 500; color: var(--muted); text-decoration: none; cursor: pointer; transition: color 0.15s; }
+.link-s:hover { color: var(--ink); }
+
+/* Product grid */
+.pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+.pc {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 9px; overflow: hidden; cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  position: relative;
+}
+.pc:hover {
+  border-color: var(--border2);
+  box-shadow: 0 3px 16px rgba(0,0,0,0.07);
+  transform: translateY(-2px);
+}
+.pc:hover .pc-cta { opacity: 1; transform: translateY(0); }
+.pc:hover .pc-wish { opacity: 1; }
+
+.pc-img {
+  aspect-ratio: 3/4;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; position: relative; overflow: hidden;
+}
+.pc-img.i1 { background: linear-gradient(155deg,#ede6d9,#f5f1ea); }
+.pc-img.i2 { background: linear-gradient(155deg,#e3dcd3,#ede8e0); }
+.pc-img.i3 { background: linear-gradient(155deg,#e8e1d6,#f0ebe3); }
+.pc-img.i4 { background: linear-gradient(155deg,#dfd8ce,#eae4da); }
+.pc-img.i5 { background: linear-gradient(155deg,#ece8e3,#f4f0eb); }
+.pc-img.i6 { background: linear-gradient(155deg,#e5dfd7,#ede8e0); }
+
+.pc-badge {
+  position: absolute; top: 9px; left: 9px;
+  font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 3px;
+}
+.pc-badge.new  { background: var(--ink); color: #fff; }
+.pc-badge.sale { background: #b91c1c; color: #fff; }
+.pc-badge.hot  { background: var(--surface2); color: var(--ink2); border: 1px solid var(--border); }
+
+.pc-wish {
+  position: absolute; top: 7px; right: 7px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255,255,255,0.88); border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; opacity: 0; transition: opacity 0.15s;
+  color: var(--muted); backdrop-filter: blur(4px);
+}
+.pc-wish:hover { color: var(--ink); }
+
+.pc-cta {
+  position: absolute; inset: auto 9px 9px;
+  background: rgba(26,25,23,0.88);
+  color: #f5f3ef; border: none;
+  padding: 8px; font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.05em;
+  border-radius: 5px; cursor: pointer;
+  opacity: 0; transform: translateY(4px);
+  transition: opacity 0.2s, transform 0.2s;
+  backdrop-filter: blur(8px);
+}
+
+.pc-body { padding: 11px 13px 14px; border-top: 1px solid var(--border); }
+.pc-name { font-family: 'Instrument Serif', serif; font-size: 14px; line-height: 1.3; margin-bottom: 2px; }
+.pc-color { font-size: 11px; color: var(--muted); margin-bottom: 7px; }
+.pc-price { font-size: 13px; font-weight: 500; display: flex; gap: 7px; align-items: baseline; }
+.pc-was { font-size: 11px; color: var(--muted); font-weight: 400; text-decoration: line-through; }
+
+/* Banner */
+.banner {
+  margin: 24px 28px 0;
+  background: var(--ink); border-radius: 10px;
+  padding: 28px 32px;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 20px;
+  position: relative; overflow: hidden;
+}
+.banner::before {
+  content: ''; position: absolute; right: -40px; top: -60px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,169,110,0.1), transparent 70%);
+  pointer-events: none;
+}
+.banner-k { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dcg-gold); margin-bottom: 7px; }
+.banner-h { font-family: 'Instrument Serif', serif; font-size: 23px; font-weight: 400; color: #f5f3ef; line-height: 1.2; margin-bottom: 6px; }
+.banner-h em { font-style: italic; color: var(--dcg-gold); }
+.banner-p { font-size: 12px; color: #6b6760; line-height: 1.6; max-width: 300px; }
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--border); padding: 18px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px; margin-top: 24px;
+}
+.footer-brand { font-family: 'Instrument Serif', serif; font-size: 15px; color: var(--ink2); }
+.footer-links { display: flex; gap: 16px; }
+.footer-links a { font-size: 11px; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+.footer-links a:hover { color: var(--ink); }
+.footer-dcg { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.footer-dcg strong { color: var(--ink2); font-weight: 500; }
+
+/* ── RIGHT COL — Chat ─────────────────────────────────────────────────── */
+.chat-col {
+  display: flex; flex-direction: column;
+  height: 100vh; background: var(--surface);
+  overflow: hidden;
+}
+
+.chat-topbar {
+  height: var(--nav-h); flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.chat-agent { display: flex; align-items: center; gap: 10px; }
+.chat-av {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.chat-av::after {
+  content: '';
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--dcg-gold); display: block;
+}
+.chat-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+.chat-status { font-size: 10.5px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.online { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+
+.dcg-badge {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 5px; padding: 4px 9px;
+  font-size: 10px; font-weight: 500; color: var(--muted);
+}
+.dcg-badge-sq {
+  width: 12px; height: 12px; border-radius: 2px;
+  background: var(--ink); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.dcg-badge-sq::after {
+  content: ''; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--dcg-gold); display: block;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DECAGON IFRAME CONTAINER
+   The embedded widget pattern: iframe injected into #decagon-widget-container.
+   Fills the full remaining height of the chat column.
+══════════════════════════════════════════════════════════════════ */
+.chat-body {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+#decagon-widget-container {
+  width: 100%;
+  height: 100%;
+}
+
+#decagon-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Placeholder — visible while no URL is configured */
+.iframe-placeholder {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px; padding: 28px;
+  text-align: center;
+}
+
+.iph-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 4px;
+}
+
+.iph-title { font-family: 'Instrument Serif', serif; font-size: 17px; color: var(--ink); }
+.iph-body { font-size: 12px; color: var(--muted); line-height: 1.65; max-width: 250px; }
+
+.iph-code {
+  font-family: 'Courier New', monospace; font-size: 10.5px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 12px 14px;
+  color: var(--ink2); text-align: left; width: 100%; max-width: 290px;
+  line-height: 1.75;
+}
+.iph-code .ck { color: var(--muted); }
+.iph-code .cs { color: #9a7c5a; }
+.iph-code .cv { color: #3d8060; }
+
+/* Cart drawer */
+.drawer-bg {
+  position: fixed; inset: 0;
+  background: rgba(26,25,23,0.3);
+  z-index: 200; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s; backdrop-filter: blur(3px);
+}
+.drawer-bg.open { opacity: 1; pointer-events: all; }
+
+.cart-drawer {
+  position: fixed; top: 0; right: var(--chat-w); bottom: 0;
+  width: 320px; background: var(--surface);
+  border-left: 1px solid var(--border);
+  z-index: 201;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column;
+}
+.cart-drawer.open { transform: translateX(0); }
+
+.cart-dh {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cart-dh-t { font-family: 'Instrument Serif', serif; font-size: 17px; font-weight: 400; }
+.cart-x {
+  width: 30px; height: 30px; border-radius: 5px;
+  border: 1px solid var(--border); background: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); transition: color 0.15s, border-color 0.15s;
+}
+.cart-x:hover { color: var(--ink); border-color: var(--border2); }
+
+.cart-items { flex: 1; overflow-y: auto; padding: 14px 20px; }
+.cart-item { display: flex; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--border); }
+.cart-item:last-child { border-bottom: none; }
+.ci-img {
+  width: 60px; height: 74px; border-radius: 6px;
+  background: var(--surface2); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.ci-n { font-family: 'Instrument Serif', serif; font-size: 14px; margin-bottom: 2px; }
+.ci-m { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.ci-p { font-size: 13px; font-weight: 500; }
+.qty-r { display: flex; align-items: center; gap: 7px; margin-top: 6px; }
+.qty-b {
+  width: 20px; height: 20px; border: 1px solid var(--border);
+  background: none; border-radius: 4px; font-size: 13px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); transition: border-color 0.15s, color 0.15s;
+}
+.qty-b:hover { border-color: var(--ink); color: var(--ink); }
+.qty-n { font-size: 12px; font-weight: 500; min-width: 14px; text-align: center; }
+
+.cart-df { padding: 14px 20px 18px; border-top: 1px solid var(--border); }
+.cart-tot { display: flex; justify-content: space-between; font-size: 14px; font-weight: 500; margin-bottom: 11px; }
+.cart-co {
+  width: 100%; background: var(--ink); color: #f5f3ef;
+  border: none; padding: 12px; font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
+  border-radius: 6px; cursor: pointer; transition: background 0.15s;
+}
+.cart-co:hover { background: var(--ink2); }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.site-body > * { animation: fadeUp 0.45s ease both; }
+.site-body > *:nth-child(2) { animation-delay: 0.05s; }
+.site-body > *:nth-child(3) { animation-delay: 0.1s; }
+.site-body > *:nth-child(4) { animation-delay: 0.15s; }
+</style>
+</head>
+<body>
+
+<!-- Cart overlay + drawer -->
+<div class="drawer-bg" id="drawerBg" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-dh">
+    <div class="cart-dh-t">Your Bag <span id="cartLabel" style="font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;">(2 items)</span></div>
+    <button class="cart-x" onclick="toggleCart()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="cart-items">
+    <div class="cart-item">
+      <div class="ci-img">🧥</div>
+      <div>
+        <div class="ci-n">Merino Wool Blazer</div>
+        <div class="ci-m">Camel · M · Relaxed</div>
+        <div class="ci-p">$298</div>
+        <div class="qty-r">
+          <button class="qty-b" onclick="chQty(this,-1)">−</button>
+          <span class="qty-n">1</span>
+          <button class="qty-b" onclick="chQty(this,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="cart-item">
+      <div class="ci-img">👖</div>
+      <div>
+        <div class="ci-n">Tapered Wool Trousers</div>
+        <div class="ci-m">Chocolate · 28 · Slim</div>
+        <div class="ci-p">$245</div>
+        <div class="qty-r">
+          <button class="qty-b" onclick="chQty(this,-1)">−</button>
+          <span class="qty-n">1</span>
+          <button class="qty-b" onclick="chQty(this,1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cart-df">
+    <div class="cart-tot"><span>Subtotal</span><span id="cartTotal">$543</span></div>
+    <button class="cart-co">Proceed to Checkout</button>
+  </div>
+</div>
+
+<!-- ═══ SHELL ═══ -->
+<div class="shell">
+
+  <!-- LEFT: retail site -->
+  <div class="site-col">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-name">Decked Out</span>
+        <span class="brand-by">by Decagon</span>
+      </div>
+      <nav><ul class="nav-links">
+        <li><a href="#">New In</a></li>
+        <li><a href="#">Women</a></li>
+        <li><a href="#">Men</a></li>
+        <li><a href="#">Collections</a></li>
+      </ul></nav>
+      <div class="topbar-right">
+        <button class="icon-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="icon-btn" onclick="toggleCart()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span class="cart-pip" id="cartPip">2</span>
+        </button>
+        <button class="icon-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="site-body">
+
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-inner">
+          <div>
+            <div class="hero-kicker">Spring Collection · Guided Discovery</div>
+            <h1 class="hero-h1">Dressed for<br/><em>every occasion</em></h1>
+            <p class="hero-p">Tell the AI stylist where you're going. It asks just enough to get to one specific recommendation — not a list of links.</p>
+            <div class="hero-btns">
+              <a href="#" class="btn btn-solid">Shop Collection</a>
+              <a href="#" class="btn btn-outline">View Lookbook</a>
+            </div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-n">4.8×</div>
+            <div class="hero-stat-l">avg. conversion lift<br/>with guided discovery</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Occasion strip -->
+      <div class="occ-strip">
+        <span class="occ-label">Occasion</span>
+        <button class="occ-btn active" onclick="setOcc(this)">Rehearsal Dinner</button>
+        <button class="occ-btn" onclick="setOcc(this)">Wedding Weekend</button>
+        <button class="occ-btn" onclick="setOcc(this)">Work Events</button>
+        <button class="occ-btn" onclick="setOcc(this)">Night Out</button>
+        <button class="occ-btn" onclick="setOcc(this)">Weekend Casual</button>
+        <button class="occ-btn" onclick="setOcc(this)">Travel</button>
+      </div>
+
+      <!-- Products -->
+      <div class="section">
+        <div class="sec-hd">
+          <div class="sec-title">Rehearsal Dinner Edit</div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span class="sec-meta">6 pieces</span>
+            <a class="link-s">View all →</a>
+          </div>
+        </div>
+        <div class="pgrid">
+          <div class="pc" onclick="quickAdd('Merino Wool Blazer',298)">
+            <div class="pc-img i1">🧥<span class="pc-badge new">New</span>
+              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+              <button class="pc-cta">Quick Add</button>
+            </div>
+            <div class="pc-body"><div class="pc-name">Merino Wool Blazer</div><div class="pc-color">Camel · 4 colors</div><div class="pc-price">$298</div></div>
+          </div>
+          <div class="pc" onclick="quickAdd('Tapered Wool Trousers',245)">
+            <div class="pc-img i2">👖<span class="pc-badge hot">Best Seller</span>
+              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+              <button class="pc-cta">Quick Add</button>
+            </div>
+            <div class="pc-body"><div class="pc-name">Tapered Wool Trousers</div><div class="pc-color">Chocolate · 3 colors</div><div class="pc-price">$245</div></div>
+          </div>
+          <div class="pc" onclick="quickAdd('Brushed Cotton Blazer',245)">
+            <div class="pc-img i3">🧥
+              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+              <button class="pc-cta">Quick Add</button>
+            </div>
+            <div class="pc-body"><div class="pc-name">Brushed Cotton Blazer</div><div class="pc-color">Walnut · 2 colors</div><div class="pc-price">$245</div></div>
+          </div>
+          <div class="pc" onclick="quickAdd('Wide-Leg Linen Trousers',195)">
+            <div class="pc-img i4">👖<span class="pc-badge new">New</span>
+              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+              <button class="pc-cta">Quick Add</button>
+            </div>
+            <div class="pc-body"><div class="pc-name">Wide-Leg Linen Trousers</div><div class="pc-color">Cream · 5 colors</div><div class="pc-price">$195</div></div>
+          </div>
+          <div class="pc" onclick="quickAdd('Silk Slip Dress',256)">
+            <div class="pc-img i5">👗<span class="pc-badge sale">−20%</span>
+              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+              <button class="pc-cta">Quick Add</button>
+            </div>
+            <div class="pc-body"><div class="pc-name">Silk Slip Dress</div><div class="pc-color">Champagne · 3 colors</div><div class="pc-price">$256 <span class="pc-was">$320</span></div></div>
+          </div>
+          <div class="pc" onclick="quickAdd('Cashmere Knit Top',195)">
+            <div class="pc-img i6">🧶
+              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+              <button class="pc-cta">Quick Add</button>
+            </div>
+            <div class="pc-body"><div class="pc-name">Cashmere Knit Top</div><div class="pc-color">Ivory · 6 colors</div><div class="pc-price">$195</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner -->
+      <div class="banner">
+        <div>
+          <div class="banner-k">Powered by Decagon</div>
+          <div class="banner-h">Your stylist is <em>already here</em></div>
+          <p class="banner-p">Describe your occasion to the agent on the right. It asks just enough to get to a specific look — no browsing required.</p>
+        </div>
+        <div style="position:relative;z-index:1;flex-shrink:0;">
+          <a href="#" class="btn btn-solid">Try the Stylist →</a>
+        </div>
+      </div>
+
+      <footer class="site-footer">
+        <div class="footer-brand">Decked Out</div>
+        <div class="footer-links">
+          <a href="#">Returns</a><a href="#">Sizing</a><a href="#">Privacy</a><a href="#">Contact</a>
+        </div>
+        <div class="footer-dcg">Agent powered by <strong>&nbsp;Decagon</strong></div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: Decagon embedded widget column -->
+  <div class="chat-col">
+
+    <!-- Chat topbar — matches main nav height exactly -->
+    <div class="chat-topbar">
+      <div class="chat-agent">
+        <div class="chat-av"></div>
+        <div>
+          <div class="chat-name">Style Assistant</div>
+          <div class="chat-status"><span class="online"></span>Online · Guided Discovery</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div class="dcg-badge"><div class="dcg-badge-sq"></div>Decagon</div>
+        <button class="icon-btn" style="width:28px;height:28px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!--
+    ══════════════════════════════════════════════════════════════════
+    DECAGON EMBEDDED WIDGET — PROPER IFRAME
+    ══════════════════════════════════════════════════════════════════
+
+    Embedding pattern: "Embedded widget"
+    ─ The iframe fills this container fully (no chat bubble, no toggle)
+    ─ Use /embed path for full-width embedded mode
+    ─ Use /demo path for collapsible mode
+
+    To activate:
+      1. Set DECAGON_CONFIG.url to your agent's /embed URL
+         e.g. "https://your-team.decagon.ai/embed"
+      2. Set DECAGON_CONFIG.hmac — HMAC-SHA256 sig generated server-side
+      3. Set user fields in DECAGON_CONFIG.user
+
+    postMessage events fired TO the widget (after DECAGON_LOADED):
+      DECAGON_USER_DATA  — passes userId, email, name, metadata, hmac
+      DECAGON_CONTEXT    — passes currentOccasion, pageSection, cartCount
+
+    postMessage events received FROM the widget:
+      DECAGON_LOADED        — widget ready; we respond with user data
+      DECAGON_CART_ADD      — AOP added item; we sync the cart badge
+      DECAGON_ORDER_CONFIRMED — full order; we update the cart
+    ══════════════════════════════════════════════════════════════════
+    -->
+    <div class="chat-body" id="chatBody">
+      <div id="decagon-widget-container">
+        <iframe
+          id="decagon-iframe"
+          src="about:blank"
+          title="Decagon Style Assistant"
+          allow="microphone"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
+        ></iframe>
+      </div>
+
+      <!-- Branded placeholder — shown until URL is configured -->
+      <div class="iframe-placeholder" id="iframePlaceholder">
+        <div class="iph-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <div class="iph-title">Decagon Widget</div>
+        <p class="iph-body">Set <code style="font-size:11px;background:var(--surface2);padding:1px 5px;border-radius:3px;">DECAGON_CONFIG.url</code> below to load the live agent into this iframe.</p>
+        <div class="iph-code">
+<span class="ck">const</span> DECAGON_CONFIG = {<br>
+&nbsp;&nbsp;<span class="ck">url</span>: <span class="cs">"https://your-agent<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.decagon.ai/embed"</span>,<br>
+&nbsp;&nbsp;<span class="ck">hmac</span>: <span class="cs">"YOUR_HMAC_SIG"</span>,<br>
+&nbsp;&nbsp;<span class="ck">user</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="ck">id</span>: <span class="cv">currentUser.id</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="ck">email</span>: <span class="cv">currentUser.email</span><br>
+&nbsp;&nbsp;}<br>
+}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+//  DECAGON WIDGET CONFIGURATION
+//  Set url to your agent's /embed path to activate the live widget.
+// ══════════════════════════════════════════════════════════════════
+const DECAGON_CONFIG = {
+  url:  'https://nyc_dialogues_2026.decagon.ai/embed',
+  hmac: '',
+  user: {
+    id:    '',
+    email: '',
+    name:  '',
+  }
+};
+
+// ── Widget init ───────────────────────────────────────────────────
+(function initDecagonWidget() {
+  const iframe = document.getElementById('decagon-iframe');
+  const holder = document.getElementById('iframePlaceholder');
+
+  if (!DECAGON_CONFIG.url) return; // show placeholder
+
+  // Build URL — append signature if provided
+  let src = DECAGON_CONFIG.url;
+  if (DECAGON_CONFIG.hmac) {
+    src += (src.includes('?') ? '&' : '?') + 'signature=' + encodeURIComponent(DECAGON_CONFIG.hmac);
+  }
+
+  iframe.src = src;
+  holder.style.display = 'none';
+
+  // ── postMessage bridge ────────────────────────────────────────
+  window.addEventListener('message', function(e) {
+    try {
+      if (new URL(DECAGON_CONFIG.url).origin !== e.origin) return;
+    } catch(_) { return; }
+
+    const { type, data } = e.data || {};
+    const widgetOrigin = new URL(DECAGON_CONFIG.url).origin;
+
+    switch (type) {
+
+      // Widget ready — send user metadata + page context
+      case 'DECAGON_LOADED':
+        iframe.contentWindow.postMessage({
+          type: 'DECAGON_USER_DATA',
+          data: {
+            userId:    DECAGON_CONFIG.user.id,
+            userEmail: DECAGON_CONFIG.user.email,
+            userName:  DECAGON_CONFIG.user.name,
+            metadata:  DECAGON_CONFIG.user,
+            hmac:      DECAGON_CONFIG.hmac,
+          }
+        }, widgetOrigin);
+
+        iframe.contentWindow.postMessage({
+          type: 'DECAGON_CONTEXT',
+          data: {
+            currentOccasion: activeOccasion,
+            pageSection:     'product-listing',
+            cartItemCount:   cartCount,
+          }
+        }, widgetOrigin);
+        break;
+
+      // AOP added a product to cart
+      case 'DECAGON_CART_ADD':
+        if (data) addToCart(data.name || '', data.price || 0);
+        break;
+
+      // AOP confirmed an order
+      case 'DECAGON_ORDER_CONFIRMED':
+        if (data && Array.isArray(data.items)) {
+          data.items.forEach(i => addToCart(i.name, i.price));
+        }
+        break;
+    }
+  });
+})();
+
+// ── Site state ────────────────────────────────────────────────────
+let cartCount    = 2;
+let cartTotalVal = 543;
+let activeOccasion = 'Rehearsal Dinner';
+
+function setOcc(btn) {
+  document.querySelectorAll('.occ-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeOccasion = btn.textContent;
+
+  // Notify widget of context change
+  const iframe = document.getElementById('decagon-iframe');
+  if (DECAGON_CONFIG.url && iframe.src !== 'about:blank') {
+    try {
+      iframe.contentWindow.postMessage({
+        type: 'DECAGON_CONTEXT',
+        data: { currentOccasion: activeOccasion }
+      }, new URL(DECAGON_CONFIG.url).origin);
+    } catch(_) {}
+  }
+}
+
+function quickAdd(name, price) { addToCart(name, price); }
+
+function addToCart(name, price) {
+  cartCount++;
+  cartTotalVal += Number(price) || 0;
+  const pip = document.getElementById('cartPip');
+  pip.textContent = cartCount;
+  pip.classList.add('bump');
+  setTimeout(() => pip.classList.remove('bump'), 420);
+  document.getElementById('cartLabel').textContent = `(${cartCount} item${cartCount !== 1 ? 's' : ''})`;
+  document.getElementById('cartTotal').textContent = `$${cartTotalVal}`;
+}
+
+function toggleCart() {
+  document.getElementById('drawerBg').classList.toggle('open');
+  document.getElementById('cartDrawer').classList.toggle('open');
+}
+
+function chQty(btn, d) {
+  const n = btn.parentElement.querySelector('.qty-n');
+  n.textContent = Math.max(1, parseInt(n.textContent) + d);
+}
+</script>
+</body>
+</html>
