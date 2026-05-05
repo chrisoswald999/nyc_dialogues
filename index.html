@@ -37,7 +37,7 @@ body {
 /* ── Shell ────────────────────────────────────────────────────────────── */
 .shell {
   display: grid;
-  grid-template-columns: 1fr var(--chat-w);
+  grid-template-columns: 1fr;
   height: 100vh;
   overflow: hidden;
 }
@@ -48,7 +48,6 @@ body {
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
-  border-right: 1px solid var(--border);
 }
 
 /* Topbar */
@@ -645,165 +644,26 @@ body {
     </div>
   </div>
 
-  <!-- RIGHT: Decagon embedded widget column -->
-  <div class="chat-col">
-
-    <!-- Chat topbar — matches main nav height exactly -->
-    <div class="chat-topbar">
-      <div class="chat-agent">
-        <div class="chat-av"></div>
-        <div>
-          <div class="chat-name">Style Assistant</div>
-          <div class="chat-status"><span class="online"></span>Online · Guided Discovery</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div class="dcg-badge"><div class="dcg-badge-sq"></div>Decagon</div>
-        <button class="icon-btn" style="width:28px;height:28px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <!--
-    ══════════════════════════════════════════════════════════════════
-    DECAGON EMBEDDED WIDGET — PROPER IFRAME
-    ══════════════════════════════════════════════════════════════════
-
-    Embedding pattern: "Embedded widget"
-    ─ The iframe fills this container fully (no chat bubble, no toggle)
-    ─ Use /embed path for full-width embedded mode
-    ─ Use /demo path for collapsible mode
-
-    To activate:
-      1. Set DECAGON_CONFIG.url to your agent's /embed URL
-         e.g. "https://your-team.decagon.ai/embed"
-      2. Set DECAGON_CONFIG.hmac — HMAC-SHA256 sig generated server-side
-      3. Set user fields in DECAGON_CONFIG.user
-
-    postMessage events fired TO the widget (after DECAGON_LOADED):
-      DECAGON_USER_DATA  — passes userId, email, name, metadata, hmac
-      DECAGON_CONTEXT    — passes currentOccasion, pageSection, cartCount
-
-    postMessage events received FROM the widget:
-      DECAGON_LOADED        — widget ready; we respond with user data
-      DECAGON_CART_ADD      — AOP added item; we sync the cart badge
-      DECAGON_ORDER_CONFIRMED — full order; we update the cart
-    ══════════════════════════════════════════════════════════════════
-    -->
-    <div class="chat-body" id="chatBody">
-      <div id="decagon-widget-container">
-        <iframe
-          id="decagon-iframe"
-          src="about:blank"
-          title="Decagon Style Assistant"
-          allow="microphone"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
-        ></iframe>
-      </div>
-
-      <!-- Branded placeholder — shown until URL is configured -->
-      <div class="iframe-placeholder" id="iframePlaceholder">
-        <div class="iph-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        </div>
-        <div class="iph-title">Decagon Widget</div>
-        <p class="iph-body">Set <code style="font-size:11px;background:var(--surface2);padding:1px 5px;border-radius:3px;">DECAGON_CONFIG.url</code> below to load the live agent into this iframe.</p>
-        <div class="iph-code">
-<span class="ck">const</span> DECAGON_CONFIG = {<br>
-&nbsp;&nbsp;<span class="ck">url</span>: <span class="cs">"https://your-agent<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.decagon.ai/embed"</span>,<br>
-&nbsp;&nbsp;<span class="ck">hmac</span>: <span class="cs">"YOUR_HMAC_SIG"</span>,<br>
-&nbsp;&nbsp;<span class="ck">user</span>: {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="ck">id</span>: <span class="cv">currentUser.id</span>,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="ck">email</span>: <span class="cv">currentUser.email</span><br>
-&nbsp;&nbsp;}<br>
-}
-        </div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════════
-//  DECAGON WIDGET CONFIGURATION
-//  Set url to your agent's /embed path to activate the live widget.
-// ══════════════════════════════════════════════════════════════════
-const DECAGON_CONFIG = {
-  url:  'https://nyc_dialogues_2026.decagon.ai/embed',
-  hmac: '',
-  user: {
-    id:    '',
-    email: '',
-    name:  '',
+// ── Decagon duet event listener (fires after widget loads) ────────
+window.addEventListener('message', function(e) {
+  const { type, data } = e.data || {};
+  if (type === 'custom_event' && data?.kind === 'cart_updated') {
+    if (data.item_name) addToCart(data.item_name, data.item_price || 0);
   }
-};
+});
 
-// ── Widget init ───────────────────────────────────────────────────
-(function initDecagonWidget() {
-  const iframe = document.getElementById('decagon-iframe');
-  const holder = document.getElementById('iframePlaceholder');
-
-  if (!DECAGON_CONFIG.url) return; // show placeholder
-
-  // Build URL — append signature if provided
-  let src = DECAGON_CONFIG.url;
-  if (DECAGON_CONFIG.hmac) {
-    src += (src.includes('?') ? '&' : '?') + 'signature=' + encodeURIComponent(DECAGON_CONFIG.hmac);
-  }
-
-  iframe.src = src;
-  holder.style.display = 'none';
-
-  // ── postMessage bridge ────────────────────────────────────────
-  window.addEventListener('message', function(e) {
-    try {
-      if (new URL(DECAGON_CONFIG.url).origin !== e.origin) return;
-    } catch(_) { return; }
-
-    const { type, data } = e.data || {};
-    const widgetOrigin = new URL(DECAGON_CONFIG.url).origin;
-
-    switch (type) {
-
-      // Widget ready — send user metadata + page context
-      case 'DECAGON_LOADED':
-        iframe.contentWindow.postMessage({
-          type: 'DECAGON_USER_DATA',
-          data: {
-            userId:    DECAGON_CONFIG.user.id,
-            userEmail: DECAGON_CONFIG.user.email,
-            userName:  DECAGON_CONFIG.user.name,
-            metadata:  DECAGON_CONFIG.user,
-            hmac:      DECAGON_CONFIG.hmac,
-          }
-        }, widgetOrigin);
-
-        iframe.contentWindow.postMessage({
-          type: 'DECAGON_CONTEXT',
-          data: {
-            currentOccasion: activeOccasion,
-            pageSection:     'product-listing',
-            cartItemCount:   cartCount,
-          }
-        }, widgetOrigin);
-        break;
-
-      // AOP added a product to cart
-      case 'DECAGON_CART_ADD':
-        if (data) addToCart(data.name || '', data.price || 0);
-        break;
-
-      // AOP confirmed an order
-      case 'DECAGON_ORDER_CONFIRMED':
-        if (data && Array.isArray(data.items)) {
-          data.items.forEach(i => addToCart(i.name, i.price));
-        }
-        break;
+// Wire up window.duet once the script has loaded
+function initDuet() {
+  if (!window.duet) return;
+  window.duet.setEventListener(function(event) {
+    if (event?.eventName === 'DECAGON_LOADED') {
+      window.duet.setMetadata({ page: 'product-listing', occasion: activeOccasion });
     }
   });
-})();
+}
 
 // ── Site state ────────────────────────────────────────────────────
 let cartItems    = [];
@@ -854,16 +714,7 @@ function setOcc(btn) {
   document.querySelectorAll('.occ-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   activeOccasion = btn.textContent;
-
-  const iframe = document.getElementById('decagon-iframe');
-  if (DECAGON_CONFIG.url && iframe.src !== 'about:blank') {
-    try {
-      iframe.contentWindow.postMessage({
-        type: 'DECAGON_CONTEXT',
-        data: { currentOccasion: activeOccasion }
-      }, new URL(DECAGON_CONFIG.url).origin);
-    } catch(_) {}
-  }
+  if (window.duet) window.duet.setMetadata({ occasion: activeOccasion });
 }
 
 function quickAdd(name, price) { addToCart(name, price); }
@@ -904,5 +755,11 @@ function chQty(idx, d) {
 
 renderCart();
 </script>
+
+<script
+  src="https://decagon.ai/loaders/release/base/v1.js"
+  data-slug="nyc_dialogues_2026"
+  onload="initDuet()"
+></script>
 </body>
 </html>
