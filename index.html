@@ -637,9 +637,10 @@ function parseItemSelection(msg) {
   return { name, price };
 }
 
-// ── postMessage fallback (some SDK versions use this path) ────────
+// ── postMessage listener — log everything from the iframe ────────
 window.addEventListener('message', function(e) {
   const msg = e.data || {};
+  if (msg.type) console.log('[decagon:postMessage]', msg.type, JSON.stringify(msg).slice(0, 200));
 
   if (msg.type === 'custom_event' && msg.data?.kind === 'cart_updated') {
     if (msg.data.item_name) addToCart(msg.data.item_name, msg.data.item_price || 0);
@@ -655,33 +656,35 @@ window.addEventListener('message', function(e) {
 // Wire up window.duet once the script has loaded
 function initDuet() {
   if (!window.duet) return;
+  console.log('[decagon] initDuet — duet object keys:', Object.keys(window.duet));
 
   window.duet.setEventListener(function(event) {
+    console.log('[decagon:setEventListener]', JSON.stringify(event));
     if (event?.eventName === 'DECAGON_LOADED') {
       window.duet.setMetadata({ page: 'product-listing', occasion: activeOccasion });
     }
   });
 
   window.duet.setMetadataRequestListener(async function(payload, callback) {
-    console.log('[decagon] setMetadataRequestListener payload:', JSON.stringify(payload));
+    console.log('[decagon:setMetadataRequestListener] FIRED', JSON.stringify(payload));
 
-    // Docs say payload = {subtype, params} but derive both from whichever
-    // structure Decagon actually sends so we're not fragile to either format.
     let subtype = payload.subtype;
     let params  = payload.params || {};
 
-    // Full chat_message shape: subtype lives inside tool_response.data
     if (!subtype && payload.tool_response?.type === 'item_selection') {
       const d = payload.tool_response.data || {};
       subtype = (d.handler || '').replace(/^@/, '') || d.id?.toLowerCase();
       params  = d.payload || {};
     }
 
-    if (!subtype) return; // nothing we recognise — let it time out
+    console.log('[decagon:setMetadataRequestListener] subtype:', subtype, 'params:', JSON.stringify(params));
+
+    if (!subtype) { callback({ ok: false, error: 'unrecognised subtype' }); return; }
 
     if (subtype.toLowerCase() === 'add_to_cart') {
       const name  = params.item_name  || params.name  || '';
       const price = params.item_price || params.price || 0;
+      console.log('[decagon:add_to_cart] name:', name, 'price:', price);
       if (name) addToCart(name, price);
       callback({
         ok: !!name,
