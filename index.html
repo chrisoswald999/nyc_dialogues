@@ -655,13 +655,13 @@ window.addEventListener('message', function(e) {
   if (msg.type) console.log('[decagon:postMessage]', msg.type, JSON.stringify(msg).slice(0, 200));
 
   if (msg.type === 'custom_event' && msg.data?.kind === 'cart_updated') {
-    if (msg.data.item_name) addToCart(msg.data.item_name, msg.data.item_price || 0);
+    if (msg.data.item_name) addToCart(msg.data.item_name, '', msg.data.item_price || 0);
     return;
   }
 
   if (msg.type === 'chat_message' && msg.tool_response?.type === 'item_selection') {
     const { name, price } = parseItemSelection(msg);
-    if (name) addToCart(name, price);
+    if (name) addToCart(name, '', price);
   }
 });
 
@@ -696,7 +696,7 @@ function initDuet() {
     if (subtype.toLowerCase() === 'add_to_cart') {
       const name  = params.item_name || '';
       const color = params.item_color || '';
-      const price = Number(params.item_price) || 0;
+      const price = Number(String(params.item_price || '').replace(/[$,]/g, '')) || 0;
       console.log('[decagon:add_to_cart] name:', name, 'color:', color, 'price:', price);
       if (name) addToCart(name, color, price);
       callback({
@@ -782,7 +782,7 @@ function setOcc(btn) {
 function quickAdd(name, color, price) { addToCart(name, color, price); }
 
 function addToCart(name, color, price) {
-  price = Number(price) || 0;
+  price = Number(String(price || '').replace(/[$,]/g, '')) || 0;
   const existing = cartItems.find(i => i.name === name);
   if (existing) {
     existing.qty++;
