@@ -678,33 +678,15 @@ function initDuet() {
   });
 
   window.duet.setMetadataRequestListener(async function(payload, callback) {
-    console.log('[decagon:setMetadataRequestListener] FIRED', JSON.stringify(payload));
-
-    let subtype = payload.subtype;
-    let params  = payload.params || {};
-
-    if (!subtype && payload.tool_response?.type === 'item_selection') {
-      const d = payload.tool_response.data || {};
-      subtype = (d.handler || '').replace(/^@/, '') || d.id?.toLowerCase();
-      params  = d.payload || {};
-    }
-
-    console.log('[decagon:setMetadataRequestListener] subtype:', subtype, 'params:', JSON.stringify(params));
-
-    if (!subtype) { callback({ ok: false, error: 'unrecognised subtype' }); return; }
-
-    if (subtype.toLowerCase() === 'add_to_cart') {
-      const name  = params.item_name || '';
-      const color = params.item_color || '';
-      const price = Number(String(params.item_price || '').replace(/[$,]/g, '')) || 0;
-      console.log('[decagon:add_to_cart] name:', name, 'color:', color, 'price:', price);
-      if (name) addToCart(name, color, price);
-      callback({
-        ok: !!name,
-        cart_count: cartItems.reduce((s, i) => s + i.qty, 0),
-        persist: false,
-      });
-    }
+    console.log('[decagon:add_to_cart] payload', JSON.stringify(payload));
+    const params = payload.params || {};
+    const name   = params.item_name || '';
+    const price  = Number(String(params.item_price || '').replace(/[$,]/g, '')) || 0;
+    if (name) addToCart(name, '', price);
+    callback({
+      ok: !!name,
+      cart_count: cartItems.reduce((s, i) => s + i.qty, 0),
+    });
   });
 }
 
