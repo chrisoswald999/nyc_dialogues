@@ -682,10 +682,11 @@ function initDuet() {
     if (!subtype) { callback({ ok: false, error: 'unrecognised subtype' }); return; }
 
     if (subtype.toLowerCase() === 'add_to_cart') {
-      const name  = params.item_name  || params.name  || '';
-      const price = params.item_price || params.price || 0;
-      console.log('[decagon:add_to_cart] name:', name, 'price:', price);
-      if (name) addToCart(name, price);
+      const name  = params.item_name || '';
+      const color = params.item_color || '';
+      const price = Number(params.item_price) || 0;
+      console.log('[decagon:add_to_cart] name:', name, 'color:', color, 'price:', price);
+      if (name) addToCart(name, color, price);
       callback({
         ok: !!name,
         cart_count: cartItems.reduce((s, i) => s + i.qty, 0),
@@ -729,6 +730,7 @@ function renderCart() {
       <div class="ci-img">${itemEmoji(item.name)}</div>
       <div>
         <div class="ci-n">${item.name}</div>
+        ${item.color ? `<div class="ci-m">${item.color}</div>` : ''}
         <div class="ci-p">$${item.price}</div>
         <div class="qty-r">
           <button class="qty-b" onclick="chQty(${idx},-1)">−</button>
@@ -747,15 +749,15 @@ function setOcc(btn) {
   if (window.duet) window.duet.setMetadata({ occasion: activeOccasion });
 }
 
-function quickAdd(name, price) { addToCart(name, price); }
+function quickAdd(name, price) { addToCart(name, '', price); }
 
-function addToCart(name, price) {
+function addToCart(name, color, price) {
   price = Number(price) || 0;
   const existing = cartItems.find(i => i.name === name);
   if (existing) {
     existing.qty++;
   } else {
-    cartItems.push({ name, price, qty: 1 });
+    cartItems.push({ name, color, price, qty: 1 });
   }
   cartTotalVal += price;
 
