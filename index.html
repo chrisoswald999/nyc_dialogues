@@ -659,23 +659,32 @@ function initDuet() {
   window.duet.setEventListener(function(event) {
     if (event?.eventName === 'DECAGON_LOADED') {
       window.duet.setMetadata({ page: 'product-listing', occasion: activeOccasion });
-      return;
-    }
-    // SDK event path for item_selection
-    if (event?.type === 'chat_message' && event?.tool_response?.type === 'item_selection') {
-      const { name, price } = parseItemSelection(event);
-      if (name) addToCart(name, price);
     }
   });
 
   window.duet.setMetadataRequestListener(async function(payload, callback) {
-    const { subtype, params } = payload;
-    if (subtype === 'add_to_cart') {
+    console.log('[decagon] setMetadataRequestListener payload:', JSON.stringify(payload));
+
+    // Docs say payload = {subtype, params} but derive both from whichever
+    // structure Decagon actually sends so we're not fragile to either format.
+    let subtype = payload.subtype;
+    let params  = payload.params || {};
+
+    // Full chat_message shape: subtype lives inside tool_response.data
+    if (!subtype && payload.tool_response?.type === 'item_selection') {
+      const d = payload.tool_response.data || {};
+      subtype = (d.handler || '').replace(/^@/, '') || d.id?.toLowerCase();
+      params  = d.payload || {};
+    }
+
+    if (!subtype) return; // nothing we recognise — let it time out
+
+    if (subtype.toLowerCase() === 'add_to_cart') {
       const name  = params.item_name  || params.name  || '';
       const price = params.item_price || params.price || 0;
-      addToCart(name, price);
+      if (name) addToCart(name, price);
       callback({
-        ok: true,
+        ok: !!name,
         cart_count: cartItems.reduce((s, i) => s + i.qty, 0),
         persist: false,
       });
