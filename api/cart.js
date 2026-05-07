@@ -12,9 +12,10 @@ export default function handler(req, res) {
   let item_name, item_price;
 
   if (payload.type === 'chat_message' && payload.tool_response?.type === 'item_selection') {
-    const tr = payload.tool_response;
-    item_name  = tr.item_name  || tr.name  || parseName(payload.text);
-    item_price = tr.item_price || tr.price || parsePrice(payload.text);
+    const d = payload.tool_response.data || {};
+    const p = d.payload || {};
+    item_name  = d.title  || p.name  || parseName(payload.text);
+    item_price = p.price  || parsePrice(payload.text);
   } else if (payload.subtype === 'add_to_cart') {
     item_name  = payload.params?.item_name;
     item_price = payload.params?.item_price;

@@ -627,27 +627,28 @@ body {
 </div>
 
 <script>
-// ── Decagon duet event listener (fires after widget loads) ────────
+// ── Parse item_selection payload ─────────────────────────────────
+// item data lives at tool_response.data.payload
+function parseItemSelection(msg) {
+  const d = msg.tool_response?.data || {};
+  const p = d.payload || {};
+  const name  = d.title  || p.name  || '';
+  const price = p.price  || 0;
+  return { name, price };
+}
+
+// ── postMessage fallback (some SDK versions use this path) ────────
 window.addEventListener('message', function(e) {
   const msg = e.data || {};
 
-  // Legacy custom_event path
   if (msg.type === 'custom_event' && msg.data?.kind === 'cart_updated') {
     if (msg.data.item_name) addToCart(msg.data.item_name, msg.data.item_price || 0);
     return;
   }
 
-  // item_selection tool_response — parse server-side then update cart
   if (msg.type === 'chat_message' && msg.tool_response?.type === 'item_selection') {
-    fetch('/api/cart', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(msg),
-    })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.ok) addToCart(data.item_name, data.item_price);
-      });
+    const { name, price } = parseItemSelection(msg);
+    if (name) addToCart(name, price);
   }
 });
 
@@ -658,6 +659,12 @@ function initDuet() {
   window.duet.setEventListener(function(event) {
     if (event?.eventName === 'DECAGON_LOADED') {
       window.duet.setMetadata({ page: 'product-listing', occasion: activeOccasion });
+      return;
+    }
+    // SDK event path for item_selection
+    if (event?.type === 'chat_message' && event?.tool_response?.type === 'item_selection') {
+      const { name, price } = parseItemSelection(event);
+      if (name) addToCart(name, price);
     }
   });
 
