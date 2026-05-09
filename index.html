@@ -471,6 +471,15 @@ body {
 .site-body > *:nth-child(3) { animation-delay: 0.08s; }
 .site-body > *:nth-child(4) { animation-delay: 0.12s; }
 .site-body > *:nth-child(5) { animation-delay: 0.16s; }
+
+/* ── Video sizing — applies to any video outside the Decagon iframe ── */
+/* Videos inside the widget iframe are NOT reachable from host-page CSS.
+   To resize those, add this rule via Decagon's Custom CSS widget setting. */
+video {
+  max-width: 240px;
+  border-radius: 8px;
+  display: block;
+}
 </style>
 </head>
 <body>
