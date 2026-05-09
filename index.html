@@ -652,13 +652,23 @@ video {
 
 <script>
 // ── Parse item_selection payload ─────────────────────────────────
-// item data lives at tool_response.data.payload
 function parseItemSelection(msg) {
   const d = msg.tool_response?.data || {};
   const p = d.payload || {};
-  const name  = d.title  || p.name  || '';
-  const price = p.price  || 0;
-  return { name, price };
+  const name  = d.title  || p.name  || p.item_name  || parseName(msg.text  || '');
+  const color = p.color  || p.item_color || '';
+  const price = p.price  || p.item_price || parsePrice(msg.text || '');
+  const productId = p.product_id || '';
+  return { name, color, price, productId };
+}
+
+function parseName(text) {
+  return text.split('\n')[0].replace(/\*+/g, '').trim();
+}
+
+function parsePrice(text) {
+  const m = text.match(/\$([0-9,]+(?:\.[0-9]{2})?)/);
+  return m ? parseFloat(m[1].replace(',', '')) : 0;
 }
 
 // ── postMessage listener — log everything from the iframe ────────
@@ -672,8 +682,8 @@ window.addEventListener('message', function(e) {
   }
 
   if (msg.type === 'chat_message' && msg.tool_response?.type === 'item_selection') {
-    const { name, price } = parseItemSelection(msg);
-    if (name) addToCart(name, '', price);
+    const { name, color, price, productId } = parseItemSelection(msg);
+    if (name) addToCart(name, color, price, productId);
   }
 });
 
