@@ -691,11 +691,7 @@ function initDuet() {
 
   window.duet.setMetadataRequestListener(async function(payload, callback) {
     console.log('[decagon:metadataRequest] payload', JSON.stringify(payload));
-    const { subtype, params = {} } = payload;
-    if (subtype !== 'add_to_cart') {
-      callback({ ok: false, error: 'unhandled subtype' });
-      return;
-    }
+    const params = payload.params || {};
     const name  = params.item_name || params.name || '';
     const color = params.item_color || params.color || '';
     const price = Number(String(params.item_price ?? params.price ?? '').replace(/[$,]/g, '')) || 0;
