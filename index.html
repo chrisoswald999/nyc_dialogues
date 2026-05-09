@@ -198,8 +198,8 @@ body {
 .link-s { font-size: 11.5px; font-weight: 400; color: var(--muted); text-decoration: none; cursor: pointer; transition: color 0.15s; }
 .link-s:hover { color: var(--ink); }
 
-/* Product grid — 2 columns for large images */
-.pgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+/* Product grid — 3 columns */
+.pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 
 .pc {
   background: var(--surface); border: 1px solid var(--border);
@@ -597,14 +597,17 @@ body {
             <div class="pc-body"><div class="pc-name">Wide-Leg Linen Trousers</div><div class="pc-color">Cream · 5 colors</div><div class="pc-price">$195</div></div>
           </div>
           <div class="pc" onclick="quickAdd('Silk Slip Dress','Champagne',256)">
-            <div class="pc-img no-img i5">👗<span class="pc-badge sale">−20%</span>
+            <div class="pc-img">
+              <img src="/products/dress_champagne.svg" alt="Silk Slip Dress in Champagne">
+              <span class="pc-badge sale">−20%</span>
               <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
               <button class="pc-cta">Quick Add</button>
             </div>
             <div class="pc-body"><div class="pc-name">Silk Slip Dress</div><div class="pc-color">Champagne · 3 colors</div><div class="pc-price">$256 <span class="pc-was">$320</span></div></div>
           </div>
           <div class="pc" onclick="quickAdd('Cashmere Knit Top','Ivory',195)">
-            <div class="pc-img no-img i6">🧶
+            <div class="pc-img">
+              <img src="/products/knit_ivory.svg" alt="Cashmere Knit Top in Ivory">
               <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
               <button class="pc-cta">Quick Add</button>
             </div>
@@ -678,11 +681,15 @@ function initDuet() {
   });
 
   window.duet.setMetadataRequestListener(async function(payload, callback) {
-    console.log('[decagon:add_to_cart] payload', JSON.stringify(payload));
-    const params = payload.params || {};
-    const name   = params.item_name || '';
-    const price  = Number(String(params.item_price || '').replace(/[$,]/g, '')) || 0;
-    if (name) addToCart(name, '', price);
+    console.log('[decagon:metadataRequest] payload', JSON.stringify(payload));
+    const { subtype, params = {} } = payload;
+    if (subtype !== 'add_to_cart') {
+      callback({ ok: false, error: 'unhandled subtype' });
+      return;
+    }
+    const name  = params.item_name || params.name || '';
+    const price = Number(String(params.item_price ?? params.price ?? '').replace(/[$,]/g, '')) || 0;
+    if (name) addToCart(name, params.color || '', price);
     callback({
       ok: !!name,
       cart_count: cartItems.reduce((s, i) => s + i.qty, 0),
@@ -697,9 +704,11 @@ let activeOccasion = 'Rehearsal Dinner';
 
 const PRODUCT_IMAGES = {
   'merino wool blazer':      '/products/lynnia_blazer_wool.avif',
-  'brushed cotton blazer':   '/products/asos_blazer_2.avif',
+  'brushed cotton blazer':   '/products/chocolate_blazer.avif',
   'tapered wool trousers':   '/products/pants_banana.avif',
   'wide-leg linen trousers': '/products/carolina_flare_pant.avif',
+  'silk slip dress':         '/products/dress_champagne.svg',
+  'cashmere knit top':       '/products/knit_ivory.svg',
 };
 
 function productImg(name) {
