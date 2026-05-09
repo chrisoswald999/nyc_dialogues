@@ -683,6 +683,18 @@ window.addEventListener('message', function(e) {
 
   if (msg.type === 'chat_message' && msg.tool_response?.type === 'item_selection') {
     const { name, color, price, productId } = parseItemSelection(msg);
+
+    // Push payload into metadata so add_to_cart tool can read via source:"metadata"
+    if (window.duet && name) {
+      window.duet.addMetadata({
+        selected_product_id:  productId,
+        selected_item_name:   name,
+        selected_item_color:  color,
+        selected_item_price:  String(price),
+      });
+    }
+
+    // Also update cart immediately for instant UI feedback
     if (name) addToCart(name, color, price, productId);
   }
 });
