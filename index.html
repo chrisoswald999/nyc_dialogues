@@ -688,8 +688,9 @@ function initDuet() {
       return;
     }
     const name  = params.item_name || params.name || '';
+    const color = params.item_color || params.color || '';
     const price = Number(String(params.item_price ?? params.price ?? '').replace(/[$,]/g, '')) || 0;
-    if (name) addToCart(name, params.color || '', price);
+    if (name) addToCart(name, color, price, params.product_id || '');
     callback({
       ok: !!name,
       cart_count: cartItems.reduce((s, i) => s + i.qty, 0),
@@ -703,6 +704,12 @@ let cartTotalVal = 0;
 let activeOccasion = 'Rehearsal Dinner';
 
 const PRODUCT_IMAGES = {
+  'BLZ-001':                 '/products/lynnia_blazer_wool.avif',
+  'BLZ-002':                 'https://www.pe-nation.com/cdn/shop/files/RESIDENCY_BLAZER_251J021_WALNUT-468.jpg?v=1771561790&width=800',
+  'TRS-001':                 '/products/pants_banana.avif',
+  'TRS-002':                 '/products/carolina_flare_pant.avif',
+  'DRS-001':                 '/products/dress_champagne.svg',
+  'KNT-001':                 '/products/knit_ivory.svg',
   'merino wool blazer':      '/products/lynnia_blazer_wool.avif',
   'brushed cotton blazer':   'https://www.pe-nation.com/cdn/shop/files/RESIDENCY_BLAZER_251J021_WALNUT-468.jpg?v=1771561790&width=800',
   'tapered wool trousers':   '/products/pants_banana.avif',
@@ -711,10 +718,11 @@ const PRODUCT_IMAGES = {
   'cashmere knit top':       '/products/knit_ivory.svg',
 };
 
-function productImg(name) {
+function productImg(name, productId) {
+  if (productId && PRODUCT_IMAGES[productId]) return PRODUCT_IMAGES[productId];
   const n = (name || '').toLowerCase();
   for (const [key, src] of Object.entries(PRODUCT_IMAGES)) {
-    if (n.includes(key)) return src;
+    if (n.includes(key.toLowerCase())) return src;
   }
   return null;
 }
@@ -744,7 +752,7 @@ function renderCart() {
   cartItems.forEach((item, idx) => {
     const div = document.createElement('div');
     div.className = 'cart-item';
-    const img = productImg(item.name);
+    const img = productImg(item.name, item.productId);
     div.innerHTML = `
       ${img
         ? `<div class="ci-img"><img src="${img}" alt="${item.name}"></div>`
@@ -770,15 +778,15 @@ function setOcc(btn) {
   if (window.duet) window.duet.setMetadata({ occasion: activeOccasion });
 }
 
-function quickAdd(name, color, price) { addToCart(name, color, price); }
+function quickAdd(name, color, price) { addToCart(name, color, price, ''); }
 
-function addToCart(name, color, price) {
+function addToCart(name, color, price, productId) {
   price = Number(String(price || '').replace(/[$,]/g, '')) || 0;
   const existing = cartItems.find(i => i.name === name);
   if (existing) {
     existing.qty++;
   } else {
-    cartItems.push({ name, color, price, qty: 1 });
+    cartItems.push({ name, color, price, productId, qty: 1 });
   }
   cartTotalVal += price;
 
