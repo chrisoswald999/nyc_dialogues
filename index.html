@@ -682,15 +682,18 @@ window.addEventListener('message', function(e) {
   }
 
   if (msg.type === 'chat_message' && msg.tool_response?.type === 'item_selection') {
+    console.log('[decagon:item_selection] raw tool_response', JSON.stringify(msg.tool_response));
     const { name, color, price, productId } = parseItemSelection(msg);
+    console.log('[decagon:item_selection] parsed', { name, color, price, productId });
 
-    // Push payload into metadata so add_to_cart tool can read via source:"metadata"
-    if (window.duet && name) {
+    // Always overwrite metadata — even with empty strings — so stale keys from
+    // a previous selection don't bleed into the next add_to_cart tool call.
+    if (window.duet) {
       window.duet.addMetadata({
-        product_id:  productId,
-        item_name:   name,
-        item_color:  color,
-        item_price:  String(price),
+        product_id:  productId || '',
+        item_name:   name      || '',
+        item_color:  color     || '',
+        item_price:  name ? String(price) : '',
       });
     }
 
@@ -745,11 +748,24 @@ const PRODUCT_IMAGES = {
   'cashmere knit top':       '/products/knit_ivory.svg',
 };
 
+// Keyword-based type fallbacks for when the tool sends a long descriptive name
+// that doesn't substring-match any PRODUCT_IMAGES key.
+const TYPE_FALLBACKS = [
+  { words: ['blazer', 'jacket', 'coat'],           src: '/products/lynnia_blazer_wool.avif' },
+  { words: ['pant', 'trouser', 'culotte', 'ankle'], src: '/products/pants_banana.avif' },
+  { words: ['dress', 'gown', 'slip'],               src: '/products/dress_champagne.svg' },
+  { words: ['top', 'knit', 'sweater', 'tee', 'blouse', 'cashmere'], src: '/products/knit_ivory.svg' },
+];
+
 function productImg(name, productId) {
   if (productId && PRODUCT_IMAGES[productId]) return PRODUCT_IMAGES[productId];
   const n = (name || '').toLowerCase();
   for (const [key, src] of Object.entries(PRODUCT_IMAGES)) {
     if (n.includes(key.toLowerCase())) return src;
+  }
+  // Garment-type keyword fallback
+  for (const { words, src } of TYPE_FALLBACKS) {
+    if (words.some(w => n.includes(w))) return src;
   }
   return null;
 }
