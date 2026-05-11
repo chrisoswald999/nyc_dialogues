@@ -198,8 +198,8 @@ body {
 .link-s { font-size: 11.5px; font-weight: 400; color: var(--muted); text-decoration: none; cursor: pointer; transition: color 0.15s; }
 .link-s:hover { color: var(--ink); }
 
-/* Product grid — 3 columns */
-.pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+/* Product grid — 4 columns */
+.pgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 
 .pc {
   background: var(--surface); border: 1px solid var(--border);
@@ -260,9 +260,10 @@ body {
   transition: opacity 0.2s, transform 0.2s;
 }
 
-.pc-body { padding: 13px 14px 16px; border-top: 1px solid var(--border); }
-.pc-name { font-family: 'Instrument Serif', serif; font-size: 15px; line-height: 1.3; margin-bottom: 3px; }
-.pc-color { font-size: 11px; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.02em; }
+.pc-body { padding: 10px 11px 12px; border-top: 1px solid var(--border); }
+.pc-name { font-family: 'Instrument Serif', serif; font-size: 13px; line-height: 1.3; margin-bottom: 2px; }
+.pc-desc { font-size: 10.5px; color: var(--muted); line-height: 1.4; margin-bottom: 4px; }
+.pc-color { font-size: 10px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.02em; }
 .pc-price { font-size: 13px; font-weight: 400; display: flex; gap: 8px; align-items: baseline; }
 .pc-was { font-size: 11px; color: var(--muted); font-weight: 400; text-decoration: line-through; }
 
@@ -565,11 +566,12 @@ video {
         <div class="sec-hd">
           <div class="sec-title">Rehearsal Dinner Edit</div>
           <div style="display:flex;align-items:center;gap:14px;">
-            <span class="sec-meta">6 pieces</span>
+            <span class="sec-meta">8 pieces</span>
             <a class="link-s">View all →</a>
           </div>
         </div>
         <div class="pgrid">
+
           <div class="pc" onclick="quickAdd('Merino Wool Blazer','Camel',298)">
             <div class="pc-img">
               <img src="/products/lynnia_blazer_wool.avif" alt="Merino Wool Blazer in Camel">
@@ -577,25 +579,43 @@ video {
               <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
               <button class="pc-cta">Quick Add</button>
             </div>
-            <div class="pc-body"><div class="pc-name">Merino Wool Blazer</div><div class="pc-color">Camel · 4 colors</div><div class="pc-price">$298</div></div>
-          </div>
-          <div class="pc" onclick="quickAdd('Tapered Wool Trousers','Chocolate',245)">
-            <div class="pc-img">
-              <img src="/products/pants_banana.avif" alt="Tapered Wool Trousers in Chocolate">
-              <span class="pc-badge hot">Best Seller</span>
-              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
-              <button class="pc-cta">Quick Add</button>
+            <div class="pc-body">
+              <div class="pc-name">Merino Wool Blazer</div>
+              <div class="pc-desc">Clean-lined silhouette in ultra-fine Italian merino</div>
+              <div class="pc-color">Camel · 4 colors</div>
+              <div class="pc-price">$298</div>
             </div>
-            <div class="pc-body"><div class="pc-name">Tapered Wool Trousers</div><div class="pc-color">Chocolate · 3 colors</div><div class="pc-price">$245</div></div>
           </div>
+
           <div class="pc" onclick="quickAdd('Brushed Cotton Blazer','Walnut',245)">
             <div class="pc-img">
               <img src="https://www.pe-nation.com/cdn/shop/files/RESIDENCY_BLAZER_251J021_WALNUT-468.jpg?v=1771561790&width=800" alt="Brushed Cotton Blazer in Walnut">
               <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
               <button class="pc-cta">Quick Add</button>
             </div>
-            <div class="pc-body"><div class="pc-name">Brushed Cotton Blazer</div><div class="pc-color">Walnut · 2 colors</div><div class="pc-price">$245</div></div>
+            <div class="pc-body">
+              <div class="pc-name">Brushed Cotton Blazer</div>
+              <div class="pc-desc">Relaxed fit with a polished, lived-in hand</div>
+              <div class="pc-color">Walnut · 2 colors</div>
+              <div class="pc-price">$245</div>
+            </div>
           </div>
+
+          <div class="pc" onclick="quickAdd('Jodie Silk Slip Dress','Champagne',325)">
+            <div class="pc-img">
+              <img src="https://lagence.com/cdn/shop/files/60902CLW_CHMP_1.jpg" alt="Jodie Silk Slip Dress in Champagne">
+              <span class="pc-badge hot">Best Seller</span>
+              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+              <button class="pc-cta">Quick Add</button>
+            </div>
+            <div class="pc-body">
+              <div class="pc-name">Jodie Silk Slip Dress</div>
+              <div class="pc-desc">Bias-cut silk charmeuse with a deep V-neckline</div>
+              <div class="pc-color">Champagne · 3 colors</div>
+              <div class="pc-price">$325</div>
+            </div>
+          </div>
+
           <div class="pc" onclick="quickAdd('Wide-Leg Linen Trousers','Cream',195)">
             <div class="pc-img">
               <img src="/products/carolina_flare_pant.avif" alt="Wide-Leg Linen Trousers in Cream">
@@ -603,25 +623,72 @@ video {
               <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
               <button class="pc-cta">Quick Add</button>
             </div>
-            <div class="pc-body"><div class="pc-name">Wide-Leg Linen Trousers</div><div class="pc-color">Cream · 5 colors</div><div class="pc-price">$195</div></div>
+            <div class="pc-body">
+              <div class="pc-name">Wide-Leg Linen Trousers</div>
+              <div class="pc-desc">Effortless drape in a lightweight linen blend</div>
+              <div class="pc-color">Cream · 5 colors</div>
+              <div class="pc-price">$195</div>
+            </div>
           </div>
-          <div class="pc" onclick="quickAdd('Silk Slip Dress','Champagne',256)">
+
+          <div class="pc" onclick="quickAdd('High-Rise Slim Trousers','Chocolate',245)">
             <div class="pc-img">
-              <img src="/products/dress_champagne.svg" alt="Silk Slip Dress in Champagne">
-              <span class="pc-badge sale">−20%</span>
+              <img src="/products/pants_banana.avif" alt="High-Rise Slim Trousers in Chocolate">
+              <span class="pc-badge hot">Best Seller</span>
               <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
               <button class="pc-cta">Quick Add</button>
             </div>
-            <div class="pc-body"><div class="pc-name">Silk Slip Dress</div><div class="pc-color">Champagne · 3 colors</div><div class="pc-price">$256 <span class="pc-was">$320</span></div></div>
+            <div class="pc-body">
+              <div class="pc-name">High-Rise Slim Trousers</div>
+              <div class="pc-desc">Tailored wool-blend with a sharp pressed crease</div>
+              <div class="pc-color">Chocolate · 3 colors</div>
+              <div class="pc-price">$245</div>
+            </div>
           </div>
-          <div class="pc" onclick="quickAdd('Cashmere Knit Top','Ivory',195)">
+
+          <div class="pc" onclick="quickAdd('Cashmere Crew Sweater','Ivory',285)">
             <div class="pc-img">
-              <img src="/products/knit_ivory.svg" alt="Cashmere Knit Top in Ivory">
+              <img src="https://is4.revolveassets.com/images/p4/n/uv/FAMF-MK18W_V1.jpg" alt="Cashmere Crew Sweater in Ivory">
               <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
               <button class="pc-cta">Quick Add</button>
             </div>
-            <div class="pc-body"><div class="pc-name">Cashmere Knit Top</div><div class="pc-color">Ivory · 6 colors</div><div class="pc-price">$195</div></div>
+            <div class="pc-body">
+              <div class="pc-name">Cashmere Crew Sweater</div>
+              <div class="pc-desc">Relaxed fit in Grade-A pure cashmere</div>
+              <div class="pc-color">Ivory · 6 colors</div>
+              <div class="pc-price">$285</div>
+            </div>
           </div>
+
+          <div class="pc" onclick="quickAdd('Satin Midi Skirt','Champagne',195)">
+            <div class="pc-img">
+              <img src="https://m.media-amazon.com/images/G/01/Shopbop/p/prod/products/vince/vince5017512984/vince5017512984_1758567888108_2-0._QL90_UX564_.jpg" alt="Satin Midi Skirt in Champagne">
+              <span class="pc-badge new">New</span>
+              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+              <button class="pc-cta">Quick Add</button>
+            </div>
+            <div class="pc-body">
+              <div class="pc-name">Satin Midi Skirt</div>
+              <div class="pc-desc">Fluid bias cut in polished washable satin</div>
+              <div class="pc-color">Champagne · 4 colors</div>
+              <div class="pc-price">$195</div>
+            </div>
+          </div>
+
+          <div class="pc" onclick="quickAdd('Silk Satin Blouse','Chocolate',245)">
+            <div class="pc-img">
+              <img src="https://m.media-amazon.com/images/G/01/Shopbop/p/prod/products/vince/vince5306713128/vince5306713128_1757601396424_2-0._QL90_UX564_.jpg" alt="Silk Satin Blouse in Chocolate">
+              <button class="pc-wish" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+              <button class="pc-cta">Quick Add</button>
+            </div>
+            <div class="pc-body">
+              <div class="pc-name">Silk Satin Blouse</div>
+              <div class="pc-desc">Fitted bias cut with pearl button placket</div>
+              <div class="pc-color">Chocolate · 3 colors</div>
+              <div class="pc-price">$245</div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -738,18 +805,23 @@ const PRODUCT_IMAGES = {
   'BLZ-002':                 'https://www.pe-nation.com/cdn/shop/files/RESIDENCY_BLAZER_251J021_WALNUT-468.jpg?v=1771561790&width=800',
   'TRS-001':                 '/products/pants_banana.avif',
   'TRS-002':                 '/products/carolina_flare_pant.avif',
-  'DRS-001':                 '/products/dress_champagne.svg',
-  'KNT-001':                 '/products/knit_ivory.svg',
+  'DRS-001':                 'https://lagence.com/cdn/shop/files/60902CLW_CHMP_1.jpg',
+  'KNT-001':                 'https://is4.revolveassets.com/images/p4/n/uv/FAMF-MK18W_V1.jpg',
   'merino wool blazer':      '/products/lynnia_blazer_wool.avif',
   'brushed cotton blazer':   'https://www.pe-nation.com/cdn/shop/files/RESIDENCY_BLAZER_251J021_WALNUT-468.jpg?v=1771561790&width=800',
   'tapered wool trousers':   '/products/pants_banana.avif',
+  'high-rise slim trousers': '/products/pants_banana.avif',
   'wide-leg linen trousers': '/products/carolina_flare_pant.avif',
   'carolina':                '/products/carolina_flare_pant.avif',
   'flare':                   '/products/carolina_flare_pant.avif',
   'wide leg':                '/products/carolina_flare_pant.avif',
   'stretch linen':           '/products/carolina_flare_pant.avif',
-  'silk slip dress':         '/products/dress_champagne.svg',
-  'cashmere knit top':       '/products/knit_ivory.svg',
+  'silk slip dress':         'https://lagence.com/cdn/shop/files/60902CLW_CHMP_1.jpg',
+  'jodie silk slip dress':   'https://lagence.com/cdn/shop/files/60902CLW_CHMP_1.jpg',
+  'cashmere knit top':       'https://is4.revolveassets.com/images/p4/n/uv/FAMF-MK18W_V1.jpg',
+  'cashmere crew sweater':   'https://is4.revolveassets.com/images/p4/n/uv/FAMF-MK18W_V1.jpg',
+  'satin midi skirt':        'https://m.media-amazon.com/images/G/01/Shopbop/p/prod/products/vince/vince5017512984/vince5017512984_1758567888108_2-0._QL90_UX564_.jpg',
+  'silk satin blouse':       'https://m.media-amazon.com/images/G/01/Shopbop/p/prod/products/vince/vince5306713128/vince5306713128_1757601396424_2-0._QL90_UX564_.jpg',
 };
 
 // Keyword-based type fallbacks for when the tool sends a long descriptive name
@@ -757,8 +829,8 @@ const PRODUCT_IMAGES = {
 const TYPE_FALLBACKS = [
   { words: ['blazer', 'jacket', 'coat'],           src: '/products/lynnia_blazer_wool.avif' },
   { words: ['pant', 'trouser', 'culotte', 'ankle'], src: '/products/pants_banana.avif' },
-  { words: ['dress', 'gown', 'slip'],               src: '/products/dress_champagne.svg' },
-  { words: ['top', 'knit', 'sweater', 'tee', 'blouse', 'cashmere'], src: '/products/knit_ivory.svg' },
+  { words: ['dress', 'gown', 'slip'],               src: 'https://lagence.com/cdn/shop/files/60902CLW_CHMP_1.jpg' },
+  { words: ['top', 'knit', 'sweater', 'tee', 'blouse', 'cashmere'], src: 'https://is4.revolveassets.com/images/p4/n/uv/FAMF-MK18W_V1.jpg' },
 ];
 
 function productImg(name, productId) {
