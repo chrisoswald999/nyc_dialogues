@@ -126,8 +126,36 @@ body {
   padding: 48px 32px 44px;
 }
 .hero-inner {
-  display: flex; align-items: center;
-  justify-content: space-between; gap: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1fr;
+  align-items: center;
+  gap: 48px;
+  min-height: 200px;
+}
+
+/* Left editorial column */
+.hero-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  padding-right: 32px;
+  border-right: 1px solid #252320;
+}
+.hero-left-labels {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 6px;
+}
+.hero-left-label {
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #3a3834; line-height: 1;
+}
+
+/* Center heading — full focus */
+.hero-center {
+  display: flex; flex-direction: column;
+  align-items: center; text-align: center;
 }
 .hero-kicker {
   font-size: 9.5px; font-weight: 400;
@@ -136,13 +164,19 @@ body {
 }
 .hero-h1 {
   font-family: 'Instrument Serif', serif;
-  font-size: clamp(28px, 3vw, 40px);
-  font-weight: 400; line-height: 1.12;
+  font-size: clamp(36px, 4.5vw, 54px);
+  font-weight: 400; line-height: 1.1;
   color: #f0ede8; letter-spacing: -0.01em;
-  margin-bottom: 14px;
 }
 .hero-h1 em { font-style: italic; color: var(--dcg-gold); }
-.hero-p { font-size: 12.5px; line-height: 1.7; color: #6b6760; max-width: 300px; margin-bottom: 26px; }
+
+/* Right CTA column */
+.hero-right {
+  padding-left: 32px;
+  border-left: 1px solid #252320;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.hero-p { font-size: 12.5px; line-height: 1.7; color: #6b6760; }
 .hero-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 .btn {
   display: inline-flex; align-items: center; gap: 7px;
@@ -551,15 +585,31 @@ body > div:not(#drawerBg):not(#cartDrawer):not(.shell) {
       <!-- Hero -->
       <section class="hero">
         <div class="hero-inner">
-          <div>
+
+          <!-- Left: editorial label column -->
+          <div class="hero-left">
+            <div class="hero-left-labels">
+              <span class="hero-left-label">New York</span>
+              <span class="hero-left-label">Spring · Summer</span>
+              <span class="hero-left-label">2026</span>
+            </div>
+          </div>
+
+          <!-- Center: heading -->
+          <div class="hero-center">
             <div class="hero-kicker">Spring Collection</div>
             <h1 class="hero-h1">Dressed for<br/><em>every occasion</em></h1>
+          </div>
+
+          <!-- Right: CTA column -->
+          <div class="hero-right">
             <p class="hero-p">Tell the stylist where you're going. It narrows to one specific look — not a list of links.</p>
             <div class="hero-btns">
               <a href="#" class="btn btn-solid">Shop Collection</a>
               <a href="#" class="btn btn-outline">View Lookbook</a>
             </div>
           </div>
+
         </div>
       </section>
 
