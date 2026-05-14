@@ -481,6 +481,19 @@ video {
   border-radius: 8px;
   display: block;
 }
+
+/* ── Decagon widget — position + scale ──────────────────────────
+   Primary:  window.duet.setWidgetCornerPosition("bottom-left") in initDuet().
+   Fallback: these rules target the widget container the loader injects into
+             <body>. They only affect elements that are not part of this page's
+             own layout (drawerBg / cartDrawer / shell are excluded).
+             Delete to revert to default bottom-right positioning. */
+body > div:not(#drawerBg):not(#cartDrawer):not(.shell) {
+  left:             20px         !important;
+  right:            auto         !important;
+  transform:        scale(1.2)   !important;
+  transform-origin: bottom left  !important;
+}
 </style>
 </head>
 <body>
@@ -793,6 +806,14 @@ function initDuet() {
       cart_count: cartItems.reduce((s, i) => s + i.qty, 0),
     });
   });
+
+  // ── Widget position + scale ──────────────────────────────────────
+  // setWidgetCornerPosition is the official Decagon API for repositioning
+  // the chat bubble. "bottom-left" moves it from the default bottom-right.
+  // repositionWidget() is a JS fallback that applies the same transform
+  // via direct style overrides in case the API call alone isn't sufficient.
+  window.duet.setWidgetCornerPosition("bottom-left");
+  repositionWidget();
 }
 
 // ── Site state ────────────────────────────────────────────────────
@@ -934,6 +955,55 @@ function chQty(idx, d) {
 }
 
 renderCart();
+
+// ── Decagon widget — JS style fallback ──────────────────────────
+// setWidgetCornerPosition() handles positioning via the Decagon API.
+// These helpers act as a belt-and-suspenders fallback: if the loader
+// injects its container with hard inline styles, the MutationObserver
+// catches the insertion and overrides them directly.
+//
+// _findWidget: walks <body> children for the Decagon container.
+//   • First tries an iframe[src*="decagon.ai"] selector and walks up.
+//   • Falls back to the first body child that isn't part of this page.
+// _widgetObserver: disconnects once the container is found and styled,
+//   so it doesn't keep running after the widget has loaded.
+
+const _KNOWN = new Set(['drawerBg', 'cartDrawer']);
+
+function _applyWidgetStyles(el) {
+  el.style.setProperty('right',            'auto',         'important');
+  el.style.setProperty('left',             '20px',         'important');
+  el.style.setProperty('transform',        'scale(1.2)',   'important');
+  el.style.setProperty('transform-origin', 'bottom left',  'important');
+}
+
+function _findWidget() {
+  const iframe = document.querySelector(
+    'iframe[src*="decagon.ai"], iframe[src*="duet"], iframe[src*="decagon"]'
+  );
+  if (iframe) {
+    let el = iframe;
+    while (el.parentElement && el.parentElement !== document.body) el = el.parentElement;
+    if (el.parentElement === document.body) return el;
+  }
+  for (const el of document.body.children) {
+    if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') continue;
+    if (_KNOWN.has(el.id) || el.classList.contains('shell')) continue;
+    return el;
+  }
+  return null;
+}
+
+function repositionWidget() {
+  const el = _findWidget();
+  if (el) { _applyWidgetStyles(el); return true; }
+  return false;
+}
+
+const _widgetObserver = new MutationObserver(function(_, obs) {
+  if (repositionWidget()) obs.disconnect();
+});
+_widgetObserver.observe(document.body, { childList: true });
 
 window.addEventListener('keydown', function(e) {
   if (e.metaKey && e.key.toLowerCase() === 'b') {
